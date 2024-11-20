@@ -1,12 +1,9 @@
 /* eslint-disable react/prop-types */
-import { useState } from 'react';
-
-const SearchBar = ({ onSearch }) => {
-  const [search, setSearch] = useState('');
+const SearchBar = ({ onSearch, value, onChange }) => {
 
   const handleSearch = (e) => {
     const value = e.target.value;
-    setSearch(value);
+    onChange(value);
     onSearch(value);
   };
 
@@ -15,7 +12,7 @@ const SearchBar = ({ onSearch }) => {
     
       <input
         type="text"
-        value={search}
+        value={value}
         onChange={handleSearch}
         placeholder="Rechercher une recette..."
         className="border border-orange-800 rounded-lg p-2 focus:outline-none"

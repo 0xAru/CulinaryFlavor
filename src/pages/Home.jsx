@@ -9,6 +9,7 @@ const Home = () => {
   const [categoryRecipes, setCategoryRecipes] = useState({});
   const [recipesToDisplay, setRecipesToDisplay] = useState([]);
   const [selectedCategory, setSelectedCategory] = useState(null);
+  const [searchValue, setSearchValue] = useState('');
 
   useEffect(() => {
     const loadCategoriesAndRecipes = async () => {
@@ -39,6 +40,8 @@ const Home = () => {
   }, []);
 
   const handleSearch = async (search) => {
+    setSearchValue(search);
+    
     // Sélection des recettes à filtrer (catégorie spécifique ou toutes)
     let recipesToFilter = selectedCategory ? categoryRecipes[selectedCategory] : Object.values(categoryRecipes).flat();
 
@@ -56,12 +59,14 @@ const Home = () => {
   const handleCategoryClick = (category) => {
     setSelectedCategory(category);
     setRecipesToDisplay(categoryRecipes[category] || []);
+    setSearchValue('');
   };
 
   // Gestion du clic sur "Toutes les recettes"
   const handleAllCategories = () => {
     setSelectedCategory(null);
     setRecipesToDisplay(Object.values(categoryRecipes).flat());
+    setSearchValue('');
   };
 
   return (
@@ -88,7 +93,7 @@ const Home = () => {
             </button>
           ))}
         </div>
-        <SearchBar onSearch={handleSearch} />
+        <SearchBar onSearch={handleSearch} value={searchValue} onChange={setSearchValue} />
       </div>
       <div className="flex flex-wrap justify-center mt-1 min-h-96">
         {recipesToDisplay.length > 0 ? (
