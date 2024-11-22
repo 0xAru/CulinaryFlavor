@@ -1,14 +1,20 @@
 /* eslint-disable react/prop-types */
 import { useState } from 'react';
+import { useDispatch } from 'react-redux';
 import { Link } from 'react-router-dom';
-import { getRecipeById } from '../services/api';
-import Modal from './RecipeModal';
+import { useGetRecipeByIdQuery } from '../features/api/apiSlice';
+import Modal from './Modal';
+import { addRecipesThunk } from '../app/middlewares/thunks/addRecipesThunk';
 
 const RecipeCard = ({ recipe }) => {
   const [isModalOpen, setIsModalOpen] = useState(false);
-  const [fullRecipe, setFullRecipe] = useState(null);
+  const [selectedDate, setSelectedDate] = useState('');
   const maxTitleLength = 20;
+  const dispatch = useDispatch();
 
+  const { data: recipeDetails, isLoading } = useGetRecipeByIdQuery(recipe.idMeal, {
+    skip: !isModalOpen, // Ne pas récupérer la recette si le modal n'est pas ouvert
+  });
 
   const truncateTitle = (title) => {
     if (title.length > maxTitleLength) {
@@ -19,10 +25,14 @@ const RecipeCard = ({ recipe }) => {
 
   const handleOpenModal = async () => {
     setIsModalOpen(true);
-    if (!fullRecipe) {
-      const recipeDetails = await getRecipeById(recipe.idMeal);
-      setFullRecipe(recipeDetails);
-      setIsModalOpen(true);
+  };
+
+  const handleConfirmAdd = () => {
+    if (selectedDate) {
+      // Dispatch du thunk avec l'ID de la recette et la date sélectionnée
+      dispatch(addRecipesThunk({ recipeId: recipe.idMeal, date: selectedDate }));
+      setIsModalOpen(false);
+      setSelectedDate('');
     }
   };
 
@@ -40,7 +50,29 @@ const RecipeCard = ({ recipe }) => {
       <Modal
         isOpen={isModalOpen}
         onClose={() => setIsModalOpen(false)}
-        recipe={fullRecipe}/>
+        title="Ajouter au planning"
+        onConfirm={handleConfirmAdd}
+        confirmText="Ajouter"
+      >
+        {isLoading ? (
+          <p>Chargement...</p>
+        ) : recipeDetails ? (
+          <>
+            <p className="mb-3">
+              Ajouter <span className="text-orange-800 font-semibold">{recipeDetails.strMeal}</span> au menu du :
+            </p>
+            <input
+              type="date"
+              value={selectedDate}
+              onChange={(e) => setSelectedDate(e.target.value)}
+              className="w-full p-2 border rounded mb-4"
+              required
+            />
+          </>
+        ) : (
+          <p>Recette non trouvée.</p>
+        )}
+      </Modal>
     </div>
   );
 };

@@ -14,7 +14,7 @@ const calendarSlice = createSlice({
         },
 
         removeEvent: (state, action) => {
-            state.value = state.value.filter(event => event.id !== action.payload); // Supprime l'événement par ID
+            state.value =  state.value.filter(event => event.id !== action.payload.id); // Supprime l'événement par ID
         },
 
         updateEvent: (state, action) => {

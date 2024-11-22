@@ -8,28 +8,14 @@ export const recipesSlice = createSlice({
     name: 'recipes',
     initialState,
     reducers: {
-
         addPlannedRecipe: (state, action) => {
-            const { recipeId, recipeName, date } = action.payload;
+            const { recipeId, recipeName, date, ingredients } = action.payload;
 
-            const ingredients = [];
-
-            // Extraire les ingrédients directement de la recette
-            for (let i = 1; i <= 20; i++) {
-                const ingredientName = action.payload[`strIngredient${i}`];
-                const ingredientMeasure = action.payload[`strMeasure${i}`];
-
-                if (ingredientName && ingredientName.trim() !== "") {
-                    ingredients.push({ name: ingredientName, measure: ingredientMeasure });
-                }
-            }
-
-            // Ajouter la recette avec ses ingrédients
             state.value.push({
                 id: recipeId,
                 name: recipeName,
                 ingredients,
-                date
+                date,
             });
         },
 
@@ -46,7 +32,8 @@ export const recipesSlice = createSlice({
             if (index !== -1) {
                 state.value[index] = {
                     ...state.value[index],
-                    ...action.payload };
+                    ...action.payload
+                };
             };
         }
     }

@@ -1,15 +1,13 @@
 /* eslint-disable react/prop-types */
-const SearchBar = ({ onSearch, value, onChange }) => {
+const SearchBar = ({ value, onChange }) => {
 
   const handleSearch = (e) => {
     const value = e.target.value;
     onChange(value);
-    onSearch(value);
   };
 
   return (
     <div className='flex justify-center my-2'>
-    
       <input
         type="text"
         value={value}

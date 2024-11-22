@@ -1,6 +1,6 @@
 import { useState } from 'react';
 import { useSelector, useDispatch } from 'react-redux';
-import { updateIngredient } from '../features/ingredientsSlice';
+import { updateIngredient, removeIngredient } from '../features/ingredientsSlice';
 
 const ShoppingList = () => {
   const dispatch = useDispatch();
@@ -22,8 +22,8 @@ const ShoppingList = () => {
     if (editingIngredient) {
       dispatch(updateIngredient({
         name: editingIngredient.name,
-        newMeasure: newQuantity,
-        newConsumptionDate: newConsumptionDate
+        measure: newQuantity,
+        consumptionDate: newConsumptionDate
       }));
       setEditingIngredient(null);
       setNewQuantity('');
@@ -37,6 +37,10 @@ const ShoppingList = () => {
     setNewConsumptionDate('');
   };
 
+  const handleDelete = (ingredientName) => {
+    dispatch(removeIngredient(ingredientName));
+  };
+
   return (
     <div className='py-10 mx-32'>
       {ingredients.length === 0 ? (
@@ -44,7 +48,13 @@ const ShoppingList = () => {
       ) : (
         <div className='flex flex-wrap gap-10 justify-center'>
           {sortedIngredients.map((ingredient) => (
-            <div key={ingredient.name} className="border py-4 px-7 rounded-lg shadow-md">
+            <div key={ingredient.name} className="relative border py-4 px-7 rounded-lg shadow-md">
+              <button 
+                onClick={() => handleDelete(ingredient.name)} 
+                className="absolute font-bold top-2 right-2 text-red-600 hover:text-red-800"
+              >
+                &#10005;
+              </button>
               <h3 className='font-bold text-center mb-2'>{ingredient.name}</h3>
               <p className='py-1'><span className='font-semibold'>Quantité:</span> {ingredient.measure}</p>
               <p className='py-1'><span className='font-semibold'>Recette:</span> {ingredient.recipeName}</p>
